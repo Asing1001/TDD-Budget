@@ -39,7 +39,7 @@ public class BudgetService {
 
             double calculatedAmount = days == refStartDate.lengthOfMonth()
                                       ? amount
-                                      : amount /refStartDate.lengthOfMonth() * days;
+                    : 1.0 * amount / refStartDate.lengthOfMonth() * days;
 
             result += calculatedAmount;
 
@@ -54,7 +54,7 @@ public class BudgetService {
     private Map<LocalDate, Integer> convertAll() {
         List<Budget> budgetList = repo.getAll();
 
-        HashMap<LocalDate, Integer> result = new HashMap<LocalDate, Integer>();
+        HashMap<LocalDate, Integer> result = new HashMap<>();
         for(Budget budget : budgetList) {
             result.put(budget.convertYearMonth(), budget.amount);
         }

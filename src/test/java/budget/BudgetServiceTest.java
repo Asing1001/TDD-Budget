@@ -1,13 +1,14 @@
 package budget;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static java.time.LocalDate.of;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BudgetServiceTest {
 
@@ -16,42 +17,87 @@ public class BudgetServiceTest {
 
     @Test
     public void budget_one_month_0801_0831() {
-
         givenBudgetList("201808", 310);
-        LocalDate startDate = LocalDate.of(2018, 8, 1);
-        LocalDate endDate = LocalDate.of(2018, 8, 31);
 
-        budgetShouldBe(startDate, endDate, 310.0);
+        totalAmountShouldBe(310.0,
+                of(2018, 8, 1),
+                of(2018, 8, 31));
     }
 
     @Test
     public void budget_one_month_0810_0820() {
-
         givenBudgetList("201808", 310);
-        LocalDate startDate = LocalDate.of(2018, 8, 10);
-        LocalDate endDate = LocalDate.of(2018, 8, 20);
 
-        budgetShouldBe(startDate, endDate, 110.0);
+        totalAmountShouldBe(110.0,
+                of(2018, 8, 10),
+                of(2018, 8, 20));
     }
 
     @Test
-    public void budget_one_month_0810_0901() {
-
+    public void budget_one_month_0810_0901_overlap_budget_last_day() {
         givenBudgetList("201808", 310);
-        LocalDate startDate = LocalDate.of(2018, 8, 10);
-        LocalDate endDate = LocalDate.of(2018, 9, 1);
 
-        budgetShouldBe(startDate, endDate, 220);
+        totalAmountShouldBe(220,
+                of(2018, 8, 10),
+                of(2018, 9, 1));
     }
 
     @Test
-    public void budget_two_month_0831_0902() {
+    public void overlap_budget_first_day() {
+        givenBudgetList("201808", 310);
 
-        givenBudgetList(new Budget("201808",  310), new Budget("201809", 300) );
-        LocalDate startDate = LocalDate.of(2018, 8, 31);
-        LocalDate endDate = LocalDate.of(2018, 9, 1);
+        totalAmountShouldBe(10,
+                of(2018, 7, 31),
+                of(2018, 8, 1));
+    }
 
-        budgetShouldBe(startDate, endDate, 20);
+    @Test
+    public void without_overlap_before_budget() {
+        givenBudgetList("201808", 310);
+
+        totalAmountShouldBe(0,
+                of(2018, 7, 29),
+                of(2018, 7, 30));
+    }
+
+    @Test
+    public void without_overlap_after_budget() {
+        givenBudgetList("201808", 310);
+
+        totalAmountShouldBe(0,
+                of(2018, 9, 10),
+                of(2018, 9, 20));
+    }
+
+    @Test
+    public void budget_two_month_0831_0901() {
+        givenBudgetList(
+                new Budget("201808", 310),
+                new Budget("201809", 300));
+
+        totalAmountShouldBe(20,
+                of(2018, 8, 31),
+                of(2018, 9, 1));
+    }
+
+    @Test
+    public void two_month() {
+        givenBudgetList(
+                new Budget("201808", 310),
+                new Budget("201809", 300));
+
+        totalAmountShouldBe(320,
+                of(2018, 8, 1),
+                of(2018, 9, 1));
+    }
+
+    @Test
+    public void daily_amount_is_point_5() {
+        givenBudgetList("201806", 15);
+
+        totalAmountShouldBe(0.5,
+                of(2018, 6, 1),
+                of(2018, 6, 1));
     }
 
     private void givenBudgetList(Budget... budgets) {
@@ -66,7 +112,7 @@ public class BudgetServiceTest {
         ));
     }
 
-    private void budgetShouldBe(LocalDate startDate, LocalDate endDate, double expected) {
+    private void totalAmountShouldBe(double expected, LocalDate startDate, LocalDate endDate) {
         Assert.assertEquals(expected, budgetService.queryBudget(startDate, endDate), 0.001);
     }
 }
