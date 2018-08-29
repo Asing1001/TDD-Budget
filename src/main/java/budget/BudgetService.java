@@ -12,11 +12,9 @@ public class BudgetService {
     public Double queryBudget(LocalDate start, LocalDate end) {
         Period period = new Period(start, end);
 
-        Double result = 0d;
-
-        for (Budget budget : repo.getAll()) {
-            result += budget.getOverlappingAmount(period);
-        }
+        Double result = repo.getAll().stream()
+                .mapToDouble(budget -> budget.getOverlappingAmount(period))
+                .sum();
 
         return Math.round(result * 100.0) / 100.0;
     }
