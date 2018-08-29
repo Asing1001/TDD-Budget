@@ -1,6 +1,9 @@
 package budget;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class Budget {
 
@@ -13,9 +16,8 @@ public class Budget {
     }
 
     public LocalDate convertYearMonth() {
-        Integer year = Integer.parseInt(yearMonth.substring(0, 4));
-        Integer month = Integer.parseInt(yearMonth.substring(4));
-        return LocalDate.of(year, month, 1);
+        return YearMonth.parse(yearMonth, ofPattern("yyyyMM"))
+                .atDay(1);
     }
 
 }

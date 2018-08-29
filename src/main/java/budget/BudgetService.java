@@ -2,7 +2,6 @@ package budget;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BudgetService {
@@ -14,10 +13,10 @@ public class BudgetService {
 
     public Double queryBudget(LocalDate start, LocalDate end) {
         if (start.isAfter(end)) {
-            return 0.0;
+            return 0d;
         }
 
-        Double result = 0.0;
+        Double result = 0d;
         Map<LocalDate, Integer> budgetMap = convertAll();
         LocalDate refStartDate = LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth());
         while(refStartDate.isBefore(end) || refStartDate.isEqual(end)) {
@@ -52,10 +51,8 @@ public class BudgetService {
     }
 
     private Map<LocalDate, Integer> convertAll() {
-        List<Budget> budgetList = repo.getAll();
-
         HashMap<LocalDate, Integer> result = new HashMap<>();
-        for(Budget budget : budgetList) {
+        for (Budget budget : repo.getAll()) {
             result.put(budget.convertYearMonth(), budget.amount);
         }
         return result;
