@@ -27,17 +27,15 @@ public class BudgetService {
             Budget budget = getCurrentBudget(budgetMap, current);
 
             LocalDate refStartDate;
-            LocalDate startOfCurrentMonth = current.withDayOfMonth(1);
-            if (start.isBefore(startOfCurrentMonth)) {
-                refStartDate = startOfCurrentMonth;
+            if (start.isBefore(budget.getFirstDay())) {
+                refStartDate = budget.getFirstDay();
             } else {
                 refStartDate = start;
             }
 
             LocalDate refEndDate;
-            LocalDate endOfCurrentMonth = current.withDayOfMonth(current.lengthOfMonth());
-            if (end.isAfter(endOfCurrentMonth)) {
-                refEndDate = endOfCurrentMonth;
+            if (end.isAfter(budget.getLastDay())) {
+                refEndDate = budget.getLastDay();
             } else {
                 refEndDate = end;
             }
@@ -46,7 +44,7 @@ public class BudgetService {
 
             result += budget.getDailyAmount() * days;
 
-            current = startOfCurrentMonth.plusMonths(1);
+            current = current.withDayOfMonth(1).plusMonths(1);
         }
 
         return Math.round(result * 100.0) / 100.0;
@@ -59,7 +57,7 @@ public class BudgetService {
     private HashMap<YearMonth, Budget> convertAll() {
         HashMap<YearMonth, Budget> result = new HashMap<>();
         for (Budget budget : repo.getAll()) {
-            result.put(budget.convertYearMonth(), budget);
+            result.put(budget.yearMonth(), budget);
         }
         return result;
     }

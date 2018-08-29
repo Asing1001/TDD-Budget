@@ -1,5 +1,6 @@
 package budget;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -14,11 +15,19 @@ public class Budget {
         this.amount = amount;
     }
 
-    public YearMonth convertYearMonth() {
+    public YearMonth yearMonth() {
         return YearMonth.parse(yearMonth, ofPattern("yyyyMM"));
     }
 
     public double getDailyAmount() {
-        return 1.0 * amount / convertYearMonth().lengthOfMonth();
+        return 1.0 * amount / yearMonth().lengthOfMonth();
+    }
+
+    public LocalDate getFirstDay() {
+        return yearMonth().atDay(1);
+    }
+
+    public LocalDate getLastDay() {
+        return yearMonth().atEndOfMonth();
     }
 }
