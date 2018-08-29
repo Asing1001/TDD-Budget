@@ -19,32 +19,35 @@ public class BudgetService {
             return 0d;
         }
 
+        return queryBudgetInPeriod(new Period(start, end));
+    }
+
+    private Double queryBudgetInPeriod(Period period) {
         Double result = 0d;
         HashMap<YearMonth, Budget> budgetMap = convertAll();
-        LocalDate current = start;
-        while (current.isBefore(end) || current.isEqual(end)) {
+        while (period.getStart().isBefore(period.getEnd()) || period.getStart().isEqual(period.getEnd())) {
 
-            Budget budget = getCurrentBudget(budgetMap, current);
+            Budget budget = getCurrentBudget(budgetMap, period.getStart());
 
             LocalDate refStartDate;
-            if (start.isBefore(budget.getFirstDay())) {
+            if (period.getStart().isBefore(budget.getFirstDay())) {
                 refStartDate = budget.getFirstDay();
             } else {
-                refStartDate = start;
+                refStartDate = period.getStart();
             }
 
             LocalDate refEndDate;
-            if (end.isAfter(budget.getLastDay())) {
+            if (period.getEnd().isAfter(budget.getLastDay())) {
                 refEndDate = budget.getLastDay();
             } else {
-                refEndDate = end;
+                refEndDate = period.getEnd();
             }
 
             long days = DAYS.between(refStartDate, refEndDate) + 1;
 
             result += budget.getDailyAmount() * days;
 
-            current = current.withDayOfMonth(1).plusMonths(1);
+            period.setStart(period.getStart().withDayOfMonth(1).plusMonths(1));
         }
 
         return Math.round(result * 100.0) / 100.0;
