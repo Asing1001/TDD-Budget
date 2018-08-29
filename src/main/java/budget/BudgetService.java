@@ -36,7 +36,7 @@ public class BudgetService {
 
             long days = DAYS.between(current, refEndDate) + 1;
 
-            result += 1.0 * budget.amount / current.lengthOfMonth() * days;
+            result += budget.getDailyAmount() * days;
 
             current = startOfCurrentMonth.plusMonths(1);
         }

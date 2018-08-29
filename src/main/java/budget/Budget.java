@@ -20,4 +20,7 @@ public class Budget {
                 .atDay(1);
     }
 
+    public double getDailyAmount() {
+        return 1.0 * amount / convertYearMonth().lengthOfMonth();
+    }
 }
