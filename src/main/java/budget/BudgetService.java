@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 public class BudgetService {
     private IRepo repo;
 
@@ -18,36 +20,28 @@ public class BudgetService {
 
         Double result = 0d;
         Map<LocalDate, Integer> budgetMap = convertAll();
-        LocalDate refStartDate = LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth());
-        while(refStartDate.isBefore(end) || refStartDate.isEqual(end)) {
+        LocalDate current = start;
+        while (current.isBefore(end) || current.isEqual(end)) {
 
-            // get the budget of this month
-            LocalDate startOfMonth = LocalDate.of(refStartDate.getYear(), refStartDate.getMonth(), 1);
-            int amount = budgetMap.containsKey(startOfMonth) ? budgetMap.get(startOfMonth) : 0;
+            LocalDate startOfCurrentMonth = current.withDayOfMonth(1);
+            int amount = budgetMap.getOrDefault(startOfCurrentMonth, 0);
 
             LocalDate refEndDate;
-            LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-            if (end.isAfter(endOfMonth)){
-                refEndDate = endOfMonth;
+            LocalDate endOfCurrentMonth = current.withDayOfMonth(current.lengthOfMonth());
+            if (end.isAfter(endOfCurrentMonth)) {
+                refEndDate = endOfCurrentMonth;
             } else {
                 refEndDate = end;
             }
 
-            // calculate month
-            int days = refEndDate.getDayOfMonth() - refStartDate.getDayOfMonth() + 1;
+            long days = DAYS.between(current, refEndDate) + 1;
 
-            double calculatedAmount = days == refStartDate.lengthOfMonth()
-                                      ? amount
-                    : 1.0 * amount / refStartDate.lengthOfMonth() * days;
+            result += 1.0 * amount / current.lengthOfMonth() * days;
 
-            result += calculatedAmount;
-
-            refStartDate = startOfMonth.plusMonths(1);
+            current = startOfCurrentMonth.plusMonths(1);
         }
 
-        result = Math.round(result * 100.0) / 100.0;
-
-        return result;
+        return Math.round(result * 100.0) / 100.0;
     }
 
     private Map<LocalDate, Integer> convertAll() {
