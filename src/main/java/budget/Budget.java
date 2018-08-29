@@ -34,4 +34,8 @@ public class Budget {
     public Period getPeriod() {
         return new Period(getFirstDay(), getLastDay());
     }
+
+    public double getOverlappingAmount(Period period) {
+        return getDailyAmount() * period.getOverlappingDays(getPeriod());
+    }
 }
