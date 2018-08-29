@@ -29,21 +29,9 @@ public class BudgetService {
 
             Budget budget = getCurrentBudget(budgetMap, period.getStart());
 
-            LocalDate refStartDate;
-            if (period.getStart().isBefore(budget.getFirstDay())) {
-                refStartDate = budget.getFirstDay();
-            } else {
-                refStartDate = period.getStart();
-            }
-
-            LocalDate refEndDate;
-            if (period.getEnd().isAfter(budget.getLastDay())) {
-                refEndDate = budget.getLastDay();
-            } else {
-                refEndDate = period.getEnd();
-            }
-
-            long days = DAYS.between(refStartDate, refEndDate) + 1;
+            LocalDate overlappingStart = period.getOverlappingStart(budget);
+            LocalDate overlappingEnd = period.getOverlappingEnd(budget);
+            long days = DAYS.between(overlappingStart, overlappingEnd) + 1;
 
             result += budget.getDailyAmount() * days;
 

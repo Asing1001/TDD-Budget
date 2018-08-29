@@ -3,8 +3,8 @@ package budget;
 import java.time.LocalDate;
 
 public class Period {
-    private LocalDate start;
     private final LocalDate end;
+    private LocalDate start;
 
     public Period(LocalDate start, LocalDate end) {
         this.start = start;
@@ -15,11 +15,19 @@ public class Period {
         return start;
     }
 
+    public void setStart(LocalDate start) {
+        this.start = start;
+    }
+
     public LocalDate getEnd() {
         return end;
     }
 
-    public void setStart(LocalDate start) {
-        this.start = start;
+    public LocalDate getOverlappingStart(Budget budget) {
+        return start.isBefore(budget.getFirstDay()) ? budget.getFirstDay() : start;
+    }
+
+    public LocalDate getOverlappingEnd(Budget budget) {
+        return end.isAfter(budget.getLastDay()) ? budget.getLastDay() : end;
     }
 }
