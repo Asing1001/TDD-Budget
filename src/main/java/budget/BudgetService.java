@@ -5,7 +5,6 @@ import java.time.YearMonth;
 import java.util.HashMap;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static java.time.temporal.ChronoUnit.DAYS;
 
 public class BudgetService {
     private IRepo repo;
@@ -28,12 +27,7 @@ public class BudgetService {
         while (period.getStart().isBefore(period.getEnd()) || period.getStart().isEqual(period.getEnd())) {
 
             Budget budget = getCurrentBudget(budgetMap, period.getStart());
-
-            LocalDate overlappingStart = period.getOverlappingStart(budget);
-            LocalDate overlappingEnd = period.getOverlappingEnd(budget);
-            long days = DAYS.between(overlappingStart, overlappingEnd) + 1;
-
-            result += budget.getDailyAmount() * days;
+            result += budget.getDailyAmount() * period.getOverlappingDays(budget);
 
             period.setStart(period.getStart().withDayOfMonth(1).plusMonths(1));
         }
