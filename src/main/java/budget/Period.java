@@ -28,6 +28,10 @@ public class Period {
     public long getOverlappingDays(Period another) {
         LocalDate overlappingStart = start.isBefore(another.start) ? another.start : start;
         LocalDate overlappingEnd = end.isAfter(another.end) ? another.end : end;
+        if (overlappingStart.isAfter(overlappingEnd)) {
+            return 0;
+        }
+
         return DAYS.between(overlappingStart, overlappingEnd) + 1;
     }
 }

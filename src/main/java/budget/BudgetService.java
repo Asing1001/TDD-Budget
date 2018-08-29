@@ -23,13 +23,9 @@ public class BudgetService {
 
     private Double queryBudgetInPeriod(Period period) {
         Double result = 0d;
-        HashMap<YearMonth, Budget> budgetMap = convertAll();
-        while (period.getStart().isBefore(period.getEnd()) || period.getStart().isEqual(period.getEnd())) {
 
-            Budget budget = getCurrentBudget(budgetMap, period.getStart());
+        for (Budget budget : repo.getAll()) {
             result += budget.getDailyAmount() * period.getOverlappingDays(budget.getPeriod());
-
-            period.setStart(period.getStart().withDayOfMonth(1).plusMonths(1));
         }
 
         return Math.round(result * 100.0) / 100.0;
