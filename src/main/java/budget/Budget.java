@@ -30,4 +30,8 @@ public class Budget {
     public LocalDate getLastDay() {
         return yearMonth().atEndOfMonth();
     }
+
+    public Period getPeriod() {
+        return new Period(getFirstDay(), getLastDay());
+    }
 }

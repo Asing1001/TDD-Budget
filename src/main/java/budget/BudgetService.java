@@ -27,7 +27,7 @@ public class BudgetService {
         while (period.getStart().isBefore(period.getEnd()) || period.getStart().isEqual(period.getEnd())) {
 
             Budget budget = getCurrentBudget(budgetMap, period.getStart());
-            result += budget.getDailyAmount() * period.getOverlappingDays(budget);
+            result += budget.getDailyAmount() * period.getOverlappingDays(budget.getPeriod());
 
             period.setStart(period.getStart().withDayOfMonth(1).plusMonths(1));
         }
