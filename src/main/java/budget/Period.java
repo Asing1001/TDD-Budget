@@ -13,21 +13,10 @@ public class Period {
         this.end = end;
     }
 
-    public LocalDate getStart() {
-        return start;
-    }
-
-    public void setStart(LocalDate start) {
-        this.start = start;
-    }
-
-    public LocalDate getEnd() {
-        return end;
-    }
-
     public long getOverlappingDays(Period another) {
         LocalDate overlappingStart = start.isBefore(another.start) ? another.start : start;
         LocalDate overlappingEnd = end.isAfter(another.end) ? another.end : end;
+
         if (overlappingStart.isAfter(overlappingEnd)) {
             return 0;
         }
